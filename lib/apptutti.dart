@@ -28,12 +28,17 @@ class Apptutti {
 
   static const MethodChannel _channel = const MethodChannel('app_tutti');
 
+  static void init({Function(Map<dynamic, dynamic>)? listener}) {
+    try {
       if (listener != null) {
         _channels
             .putIfAbsent(LISTENER_INIT, () => MethodChannel(LISTENER_INIT))
             .setMethodCallHandler((cm) => _methodCall(cm, listener));
       }
-    _channel.invokeMethod(METHOD_INIT, {});
+      _channel.invokeMethod(METHOD_INIT, {});
+    } on PlatformException {
+      return false;
+    }
   }
 
   /// Check if sdk is ready to show ads
@@ -52,6 +57,7 @@ class Apptutti {
   /// If true, placement are shown
   static Future<bool?> showAd(String type,
       {Function(Map<dynamic, dynamic>)? listener}) async {
+    try {
     if (listener != null) {
       _channels
           .putIfAbsent(LISTENER_AD, () => MethodChannel(LISTENER_AD))
@@ -60,6 +66,9 @@ class Apptutti {
     final result = await _channel.invokeMethod(
         METHOD_AD, <String, dynamic>{ADTYPE: type, ADEVENT: ADEVENT_SHOW});
     return result;
+    } on PlatformException {
+      return false;
+    }
   }
 
   static _methodCall(
