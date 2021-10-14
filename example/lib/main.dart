@@ -21,6 +21,17 @@ class _MyAppState extends State<MyApp> {
                   onPressed: () =>
                       Apptutti.init(listener: _tuttiInitListerner)),
               ElevatedButton(child: Text("Adready"), onPressed: _isAdReady),
+              ElevatedButton(
+                  child: Text("Ad-Banner"),
+                  onPressed: () => Apptutti.showAd(Apptutti.ADTYPE_BANNER)),
+              ElevatedButton(
+                  child: Text("Ad-Interstitial"),
+                  onPressed: () =>
+                      Apptutti.showAd(Apptutti.ADTYPE_INTERSTITIAL)),
+              ElevatedButton(
+                  child: Text("Ad-Rewarded"),
+                  onPressed: () => Apptutti.showAd(Apptutti.ADTYPE_REWARDED,
+                      listener: _tuttiAdsListener)),
             ]))));
   }
 

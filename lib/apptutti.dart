@@ -15,7 +15,14 @@ class Apptutti {
 
   static const ADEVENT = "adEvent";
   static const ADEVENT_READY = "adEventReady";
+  static const ADEVENT_SHOW = "adEventShow";
+  static const ADEVENT_LOADED = "adEventLoaded";
+  static const ADEVENT_COMPLETE = "adEventComplete";
 
+  static const ADTYPE = "adType";
+  static const ADTYPE_BANNER = "bannerAd";
+  static const ADTYPE_REWARDED = "rewardedAd";
+  static const ADTYPE_INTERSTITIAL = "interstitialAd";
 
   static const MethodChannel _channel = const MethodChannel('app_tutti');
 
@@ -32,4 +39,21 @@ class Apptutti {
 
     return result;
   }
+
+  /// Show video ad, if ready.
+  ///
+  /// [type] select BANNER, REWARDED, INTERSTITIAL ad
+  /// If true, placement are shown
+  static Future<bool?> showAd(String type,
+      {Function(Map<dynamic, dynamic>)? listener}) async {
+    if (listener != null) {
+      _channels
+          .putIfAbsent(LISTENER_AD, () => MethodChannel(LISTENER_AD))
+          .setMethodCallHandler((call) => _methodCall(call, listener));
+    }
+    final result = await _channel.invokeMethod(
+        METHOD_AD, <String, dynamic>{ADTYPE: type, ADEVENT: ADEVENT_SHOW});
+    return result;
+  }
+
 }

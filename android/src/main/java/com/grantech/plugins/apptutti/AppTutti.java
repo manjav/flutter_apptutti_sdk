@@ -39,6 +39,19 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
     final String INIT_EVENT = "initEvent";
     final String INIT_DATA = "initData";
     
+    final String METHOD_AD = "ad";
+    final String LISTENER_AD = "adListener";
+
+    final String ADEVENT = "adEvent";
+    final String ADEVENT_READY = "adEventReady";
+    final String ADEVENT_SHOW = "adEventShow";
+    final String ADEVENT_LOADED = "adEventLoaded";
+    final String ADEVENT_COMPLETE = "adEventComplete";
+
+    final String ADTYPE = "adType";
+    final String ADTYPE_BANNER = "bannerAd";
+    final String ADTYPE_REWARDED = "rewardedAd";
+    final String ADTYPE_INTERSTITIAL = "interstitialAd";
 
     final String TAG = "tutti";
     /// The MethodChannel that will the communication between Flutter and native Android
@@ -110,6 +123,17 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
 
             if (adEvent.equals(ADEVENT_READY)) {
                 result.success(ApptuttiSDK.getInstance().isAdsEnabled());
+            } else if (adEvent.equals(ADEVENT_SHOW)) {
+
+                final String adType = (String) call.argument(ADTYPE);
+                if (adType.equals(ADTYPE_BANNER)) {
+                    ApptuttiSDK.getInstance().bannerAd();
+                } else if (adType.equals(ADTYPE_INTERSTITIAL)) {
+                    ApptuttiSDK.getInstance().interstitialAd();
+                } else {
+                    showVideoAd();
+                }
+
                 result.success(true);
             }
             return;
@@ -118,6 +142,30 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
         result.notImplemented();
     }
 
+    private void showVideoAd() {
+        ApptuttiSDK.getInstance().rewardedVideoAd(new IAdsListener() {
+            @Override
+            // Call back when the ad is loaded successfully
+            public void onAdsLoaded() {
+                Map<String, Object> arguments = new HashMap<>();
+                arguments.put(ADTYPE, ADTYPE_REWARDED);
+                arguments.put(ADEVENT, ADEVENT_LOADED);
+                invokeMethod(LISTENER_AD, arguments);
+                log("onAdsLoaded");
+            }
+
+            @Override
+            // call back when player complete watching the video ad
+            public void onAdsComplete() {
+                Map<String, Object> arguments = new HashMap<>();
+                arguments.put(ADTYPE, ADTYPE_REWARDED);
+                arguments.put(ADEVENT, ADEVENT_COMPLETE);
+                invokeMethod(LISTENER_AD, arguments);
+                //this is just sample function, please replace with your
+                log("onAdsComplete");
+            }
+        });
+    }
 
     private void invokeMethod(String methodName, Map<String, Object> arguments) {
         channel.invokeMethod(methodName, arguments);
