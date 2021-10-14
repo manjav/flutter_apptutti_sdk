@@ -16,7 +16,18 @@ class _MyAppState extends State<MyApp> {
             appBar: AppBar(title: const Text('App-tutti Example')),
             body: Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
+              ElevatedButton(
+                  child: Text("Init"),
+                  onPressed: () =>
+                      Apptutti.init(listener: _tuttiInitListerner)),
+              ElevatedButton(child: Text("Adready"), onPressed: _isAdReady),
             ]))));
+  }
+
+
+  Future<void> _isAdReady() async {
+    var result = await Apptutti.isAdReady();
+    print("isAdReady $result");
   }
 
 }

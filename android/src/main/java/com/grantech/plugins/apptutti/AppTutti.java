@@ -105,6 +105,16 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
             result.success(true);
             return;
         }
+        if (call.method.equals(METHOD_AD)) {
+            final String adEvent = (String) call.argument(ADEVENT);
+
+            if (adEvent.equals(ADEVENT_READY)) {
+                result.success(ApptuttiSDK.getInstance().isAdsEnabled());
+                result.success(true);
+            }
+            return;
+        }
+
         result.notImplemented();
     }
 
