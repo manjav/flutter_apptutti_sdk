@@ -1,0 +1,35 @@
+group 'com.grantech.plugins.apptutti'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://maven.google.com'  }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://mymavenrepo.com/repo/RLU4gzVqbRPjgwTdInhP/'  }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 21
+        multiDexEnabled true
+    }
+}
+dependencies {
+}
