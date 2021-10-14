@@ -24,6 +24,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import com.apptutti.sdk.ApptuttiSDK;
+import com.apptutti.sdk.IAdsListener;
 import com.apptutti.sdk.IInitListener;
 import com.apptutti.sdk.UserInfo;
 

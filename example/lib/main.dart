@@ -35,10 +35,16 @@ class _MyAppState extends State<MyApp> {
             ]))));
   }
 
+  void _tuttiInitListerner(Map<dynamic, dynamic> args) {
+    print("_tuttiInitListerner => $args");
+  }
 
   Future<void> _isAdReady() async {
     var result = await Apptutti.isAdReady();
     print("isAdReady $result");
   }
 
+  void _tuttiAdsListener(Map<dynamic, dynamic> args) {
+    print("_tuttiAdsListener => $args");
+  }
 }

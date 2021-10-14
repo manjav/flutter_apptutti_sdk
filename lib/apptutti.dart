@@ -24,9 +24,15 @@ class Apptutti {
   static const ADTYPE_REWARDED = "rewardedAd";
   static const ADTYPE_INTERSTITIAL = "interstitialAd";
 
+  static final Map<String, MethodChannel> _channels = {};
+
   static const MethodChannel _channel = const MethodChannel('app_tutti');
 
-  static void init() {
+      if (listener != null) {
+        _channels
+            .putIfAbsent(LISTENER_INIT, () => MethodChannel(LISTENER_INIT))
+            .setMethodCallHandler((cm) => _methodCall(cm, listener));
+      }
     _channel.invokeMethod(METHOD_INIT, {});
   }
 
@@ -56,4 +62,9 @@ class Apptutti {
     return result;
   }
 
+  static _methodCall(
+      MethodCall methodCall, Function(Map<dynamic, dynamic> args)? listener) {
+    listener?.call(methodCall.arguments);
+    print("${methodCall.method} ${methodCall.arguments}");
+  }
 }
