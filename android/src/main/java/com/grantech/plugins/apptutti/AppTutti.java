@@ -23,13 +23,34 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import com.apptutti.sdk.ApptuttiSDK;
+import com.apptutti.sdk.IInitListener;
+import com.apptutti.sdk.UserInfo;
+
 
 /**
  * apptutti Mansour Djawadi 2021
  */
 public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware {
 
+    final String METHOD_INIT = "init";
+    final String LISTENER_INIT = "initListener";
+
+    final String INIT_EVENT = "initEvent";
+    final String INIT_DATA = "initData";
+    
+
     final String TAG = "tutti";
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private UserInfo userInfo;
+    private MethodChannel channel;
+    private FlutterActivity activity;
+    private BinaryMessenger messenger;
+    private final Map<String, MethodChannel> methodChannels = new HashMap<>();
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "app_tutti");
@@ -57,6 +78,33 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+        if (call.method.equals(METHOD_INIT)) {
+            //Initialize ApptuttiSDK
+            ApptuttiSDK.getInstance().init(activity, new IInitListener() {
+                @Override
+                public void onInitialized(final UserInfo info) {
+                    //Set init status to true
+                    Map<String, Object> arguments = new HashMap<>();
+                    arguments.put(INIT_EVENT, true);
+                    arguments.put(INIT_DATA, info.toString());
+                    invokeMethod(LISTENER_INIT, arguments);
+                    log("Initialized with userInfo: " + userInfo);
+                }
+
+                @Override
+                public void onInitializeFailed(final String message) {
+                    //Print message or do proper thing according to initialize failed event.
+                    Map<String, Object> arguments = new HashMap<>();
+                    arguments.put(INIT_EVENT, false);
+                    arguments.put(INIT_DATA, message);
+                    invokeMethod(LISTENER_INIT, arguments);
+                    log("Initialize failed with message: " + message);
+                }
+            });
+
+            result.success(true);
+            return;
+        }
         result.notImplemented();
     }
 
@@ -67,11 +115,11 @@ public class AppTutti implements FlutterPlugin, MethodCallHandler, ActivityAware
     }
 
     private MethodChannel findChannel(String methodName) {
-        if (placementChannels.containsKey(methodName)) {
-            return placementChannels.get(methodName);
+        if (methodChannels.containsKey(methodName)) {
+            return methodChannels.get(methodName);
         }
         MethodChannel methodChannel = new MethodChannel(messenger, methodName);
-        placementChannels.put(methodName, methodChannel);
+        methodChannels.put(methodName, methodChannel);
         return methodChannel;
     }
 

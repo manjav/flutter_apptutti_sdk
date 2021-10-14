@@ -32,4 +32,5 @@ android {
     }
 }
 dependencies {
+    implementation 'com.grantech.repos:tutti:1.0.1'
 }
